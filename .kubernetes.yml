@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $app_name
+  labels:
+    app: $app_name
+spec:
+  replicas: $k8s_replicas
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: $app_name
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: $app_name
+    spec:
+      imagePullSecrets:
+        - name: $DOCKER_PULL_SECRET
+      volumes:
+        - name: logvolume
+          persistentVolumeClaim:
+            claimName: $log_volume_pvc
+        - name: application-config
+          configMap:
+            name: $SOLR_API_CONFIG_MAP
+            items:
+              - key: application.yml
+                path: application.yml
+      containers:
+        - name: solr-api
+          image: $IMAGE
+          ports:
+            - containerPort: $port
+          volumeMounts:
+            - name: application-config
+              mountPath: "/app/config/"
+              readOnly: true
+            - name: logvolume
+              mountPath: $logspath
+          livenessProbe:
+            httpGet:
+              path: $contextPath/actuator/health
+              port: $port
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: $contextPath/actuator/health
+              port: $port
+            initialDelaySeconds: 60
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: $app_name-service
+spec:
+  selector:
+    app: $app_name
+  ports:
+    - protocol: TCP
+      port: $port
+      targetPort: $port
+  type: NodePort
