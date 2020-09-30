@@ -1,6 +1,13 @@
 package uk.ac.ebi.pride.solr.indexes.api.controller;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.springdoc.core.converters.models.PageableAsQueryParam;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.solr.core.query.result.FacetPage;
+import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.pride.solr.commons.PrideSolrProject;
+import uk.ac.ebi.pride.solr.commons.dto.FindByKeywordInputDto;
 import uk.ac.ebi.pride.solr.indexes.services.SolrProjectService;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("project")
@@ -58,12 +69,13 @@ public class ProjectController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    /*
     @RequestMapping(value = "/findByAccession", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PrideSolrProject> findByAccession(@RequestParam("accession") String accession) {
         return ResponseEntity.ok(solrProjectService.findByAccession(accession));
     }
 
-   /* @RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<PrideSolrProject>> findAll() {
         return ResponseEntity.status(HttpStatus.OK).body(SolrProjectService.findAll());
     }
