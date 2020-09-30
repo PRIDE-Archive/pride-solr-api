@@ -26,7 +26,7 @@ docker_build:
     - apk add --update bash gettext tzdata coreutils ca-certificates wget
     - update-ca-certificates
     - ls
-    - envsubst '${JAR_FILE_NAME}' < .Dockerfile > Dockerfile
+    - envsubst '${JAR_FILE_NAME} ${NFS_UID} ${NFS_GID} ${NFS_GID2}' < .Dockerfile > Dockerfile
     - cat Dockerfile
     - docker info
     - docker build -t $IMAGE .
