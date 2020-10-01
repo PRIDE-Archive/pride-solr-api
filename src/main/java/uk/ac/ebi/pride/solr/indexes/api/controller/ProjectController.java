@@ -1,6 +1,7 @@
 package uk.ac.ebi.pride.solr.indexes.api.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import uk.ac.ebi.pride.solr.commons.PrideSolrProject;
 import uk.ac.ebi.pride.solr.indexes.services.SolrProjectService;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("project")
@@ -64,10 +68,20 @@ public class ProjectController {
         return ResponseEntity.ok(solrProjectService.findByAccession(accession));
     }
 
-    @RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Iterable<PrideSolrProject>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAll());
+    @RequestMapping(value = "/findAllAccessionAndIds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Set<String>>> findAllAccessionAndIds() throws IOException, SolrServerException {
+        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAllAccessionAndIds());
     }
+
+    @RequestMapping(value = "/findProjectAccessionsWithEmptyFileNames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<String>> findProjectAccessionsWithEmptyFileNames() throws IOException, SolrServerException {
+        return ResponseEntity.ok(solrProjectService.findProjectAccessionsWithEmptyFileNames());
+    }
+
+   /* @RequestMapping(value = "/findAllIds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<String>> findAllIds() throws IOException, SolrServerException {
+        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAllIds());
+    }*/
 
 
      /*
@@ -123,14 +137,6 @@ public class ProjectController {
         return ResponseEntity.ok(SolrProjectService.findAutoComplete(keyword));
     }
 
-    @RequestMapping(value = "/findProjectAccessionsWithEmptyPeptideSequencesOrProteinIdentifications", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<String>> findProjectAccessionsWithEmptyPeptideSequencesOrProteinIdentifications() throws IOException, SolrServerException {
-        return ResponseEntity.ok(SolrProjectService.findProjectAccessionsWithEmptyPeptideSequencesOrProteinIdentifications());
-    }
-
-    @RequestMapping(value = "/findProjectAccessionsWithEmptyFileNames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Set<String>> findProjectAccessionsWithEmptyFileNames() throws IOException, SolrServerException {
-        return ResponseEntity.ok(SolrProjectService.findProjectAccessionsWithEmptyFileNames());
-    }*/
+   */
 
 }
