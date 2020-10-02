@@ -15,7 +15,6 @@ import uk.ac.ebi.pride.solr.indexes.services.SolrProjectService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -57,7 +56,7 @@ public class ProjectController {
     }
 
     @RequestMapping(value = "/saveAll", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveAll(List<PrideSolrProject> projects) {
+    public ResponseEntity saveAll(@RequestBody List<PrideSolrProject> projects) {
         solrProjectService.saveAll(projects);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -68,9 +67,14 @@ public class ProjectController {
         return ResponseEntity.ok(solrProjectService.findByAccession(accession));
     }
 
-    @RequestMapping(value = "/findAllAccessionAndIds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Set<String>>> findAllAccessionAndIds() throws IOException, SolrServerException {
-        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAllAccessionAndIds());
+    @RequestMapping(value = "/findAllAccessions", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<String>> findAllAccessions() throws IOException, SolrServerException {
+        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAllAccessions());
+    }
+
+    @RequestMapping(value = "/findAllIds", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Set<String>> findAllIds() throws IOException, SolrServerException {
+        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.findAllIds());
     }
 
     @RequestMapping(value = "/findProjectAccessionsWithEmptyFileNames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
