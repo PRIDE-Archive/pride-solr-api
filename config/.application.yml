@@ -22,4 +22,4 @@ springdoc:
     tagsSorter: alpha
     disable-swagger-default-url: true
 
-spring.data.solr.host: $solrUrl
+spring.data.solr.host: $solrUrls
