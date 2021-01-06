@@ -40,7 +40,13 @@ public class ProjectController {
 
     @RequestMapping(value = "/upsert", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PrideSolrProject> upsert(@RequestBody PrideSolrProject prideSolrProject) {
-        return ResponseEntity.status(HttpStatus.OK).body(solrProjectService.upsert(prideSolrProject));
+        PrideSolrProject prideSolrProjectResponse = null;
+        try {
+            prideSolrProjectResponse = solrProjectService.upsert(prideSolrProject);
+        } catch (Exception ex) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(prideSolrProjectResponse);
     }
 
     @RequestMapping(value = "/deleteProjectById", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
